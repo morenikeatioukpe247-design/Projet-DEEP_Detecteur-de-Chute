@@ -17,19 +17,19 @@ static bool initialized = false;
 static GPIO_TypeDef* button_gpio;
 static uint32_t button_pin;
 
-/*
+
 bool read_button(void)
 {
 	return HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
 }
-*/
+
 void BUTTON_init(GPIO_TypeDef* gpio, uint32_t pin)
 {
     button_gpio = gpio;
     button_pin = pin;
 
     // Configuration du GPIO en entrée + pull-up
-    BSP_GPIO_pin_config(GPIOB, GPIO_PIN_0, GPIO_MODE_INPUT, GPIO_PULLUP, GPIO_SPEED_FREQ_HIGH, GPIO_NO_AF);
+    BSP_GPIO_pin_config(gpio, pin, GPIO_MODE_INPUT, GPIO_PULLUP, GPIO_SPEED_FREQ_HIGH, GPIO_NO_AF);
 
     // Appel de process_ms() toutes les 1 ms
     BSP_systick_add_callback_function(&process_ms);
