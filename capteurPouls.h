@@ -17,6 +17,8 @@ void     Pouls_Init(void);
 uint16_t Pouls_GetRaw(void);
 bool     Pouls_ElectrodesConnectees(void);
 uint8_t  Pouls_GetBPM(void);
+bool Pouls_IsValid(void);
+
 
 #endif /*CAPTEURPOULS_H*/
 
