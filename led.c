@@ -19,13 +19,13 @@ void LED_init(void)
 
 void LED_setJour(void)
 {
-    // JOUR = LED éteinte
+    // JOUR = LED Ã©teinte
     HAL_GPIO_WritePin(LED_BLUE_GPIO, LED_BLUE_PIN, GPIO_PIN_RESET);
 }
 
 void LED_setNuit(void)
 {
-    // NUIT = LED allumée
+    // NUIT = LED allumÃ©e
     HAL_GPIO_WritePin(LED_BLUE_GPIO, LED_BLUE_PIN, GPIO_PIN_SET);
 }
 
