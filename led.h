@@ -9,8 +9,11 @@
 #define LED_H_
 #include "stm32g4xx_hal.h"
 #include "stm32g4_gpio.h"
+
+
 #define LED_BLUE_PIN		GPIO_PIN_11
 #define LED_BLUE_GPIO       GPIOA
+
 void LED_init(void);
 void LED_setJour(void);
 void LED_setNuit(void);
