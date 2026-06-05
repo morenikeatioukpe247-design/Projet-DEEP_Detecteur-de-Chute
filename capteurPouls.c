@@ -7,28 +7,55 @@
 
 #include "capteurPouls.h"
 #include "stm32g4_adc.h"
+#include "stm32g4_gpio.h"
+#include "AD8232/stm32g4_ad8232.h"
 
-static uint8_t last_bpm = 0;
+static uint8_t  last_bpm = 0;
+static uint32_t last_beat_time = 0;
+static uint16_t peak_threshold = 2100;
+static uint16_t last_raw = 0;
 
 void Pouls_Init(void)
 {
-    // ADC déjà initialisé par BSP (USE_ADC=1, USE_IN1=1)
+    AD8232_init();
+    last_beat_time = HAL_GetTick();
 }
 
 uint16_t Pouls_GetRaw(void)
 {
-    return BSP_ADC_getValue(ADC_1); // PA0
+    return AD8232_getRaw();
 }
 
 bool Pouls_ElectrodesConnectees(void)
 {
-    // LO+ et LO- sur PA1 et PA2
-    // Si l'un des deux est HIGH entraine que électrode déconnectée
-    return (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_RESET &&
-            HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) == GPIO_PIN_RESET);
+    return AD8232_electrodesConnectees();
+}
+
+bool Pouls_IsValid(void)
+{
+    return (last_bpm >= 40 && last_bpm <= 180);
 }
 
 uint8_t Pouls_GetBPM(void)
 {
+    uint32_t current_time = HAL_GetTick();
+    uint16_t raw = Pouls_GetRaw();
+
+    if (raw > peak_threshold && last_raw <= peak_threshold)
+    {
+        uint32_t interval = current_time - last_beat_time;
+
+        if (interval > 350 && interval < 1500)
+        {
+            last_bpm = (uint8_t)(60000UL / interval);
+            last_beat_time = current_time;
+        }
+    }
+
+    last_raw = raw;
+
+    if (raw > peak_threshold + 200)
+        peak_threshold = raw - 300;
+
     return last_bpm;
 }
