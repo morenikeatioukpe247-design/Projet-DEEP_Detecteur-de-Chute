@@ -16,7 +16,7 @@ void BT_Init(void)
 	BSP_UART_init(UART1_ID, 9600);
 }
 
-// Déclaration externe du handle UART généré par CubeMX
+// DÃ©claration externe  du handle UART gÃ©nÃ©rÃ© par CubeMX
 void BT_SendAlert(AlerteType_t alerte, uint8_t bpm, ModeType_t mode)
 {
     char buffer[128];
