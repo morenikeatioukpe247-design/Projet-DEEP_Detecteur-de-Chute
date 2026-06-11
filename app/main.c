@@ -12,10 +12,11 @@
 #include "stm32g4_gpio.h"
 #include "stm32g4_uart.h"
 #include "stm32g4_utils.h"
-
+#include "stdio.h"
 
 /*#define AT_CMD_SIZE 16
 static uint8_t tab[AT_CMD_SIZE];*/
+
 
 
 #define BLINK_DELAY		100	//ms
@@ -60,8 +61,7 @@ int main(void)
 	/* Initialisation des pÃ©riphÃ©riques utilisÃ©s dans votre programme */
 	BSP_GPIO_enable();
 	BSP_UART_init(UART2_ID,115200);
-	BSP_UART_init(UART1_ID,38400);
-	BSP_UART_init(UART1_ID, 9600); //J'ai utilisé pour visualisé sur le télphone
+	BSP_UART_init(UART1_ID, 9600); //Bluetooth HC-05
 	BSP_ADC_init();
 
 	/* Indique que les printf sont dirigÃ©s vers l'UART2 */
@@ -72,15 +72,11 @@ int main(void)
 
 
 
-	/* Hello student */
-	printf("Hi <Student>, can you read me?\n");
-	BUTTON_init(GPIOB, GPIO_PIN_0);   // bouton externe sur PB0
-	BUZZER_init();
-	LED_init();
-	BT_Init();
-	Pouls_Init();
-	Screen_Init();
-	MPU_Init();
+	/* Demarrage du systeme */
+	printf("=== Systeme DECHUTE - Demarrage ===\n");
+	
+	/* Initialisation du systeme complet */
+	MAE_Init();
 
 	/*ILI9341_Init();
 	ILI9341_Fill(ILI9341_COLOR_WHITE);
@@ -97,25 +93,23 @@ int main(void)
 	while (1)
 	{
 		system_state_machine();
+		
+		HAL_Delay(10);
 
-		             //CODE DE TESTS
+		/*
+		************************CODE DE TESTS**********************************
+		*/
 		   //Bouton
 		/*button_event_t evt = BUTTON_state_machine();
 			if (evt == BUTTON_EVENT_PRESSED)
 				printf("appui detecte\n");*/
 
-
 		   //Capteurs de pouls
-
 	   /* if (Pouls_ElectrodesConnectees())
-	    {
-	        uint8_t bpm = Pouls_GetBPM();
-	        printf("BPM = %d | RAW = %d\n", bpm, Pouls_GetRaw());
-	    }
+	    {uint8_t bpm = Pouls_GetBPM();
+	        printf("BPM = %d | RAW = %d\n", bpm, Pouls_GetRaw());}
 	    else
-	    {
-	        printf("Electrodes deconnectees\n");
-	    }
+	    { printf("Electrodes deconnectees\n");}
 	    HAL_Delay(10);*/
 
 		//ILI9341_demo(); Ecran
