@@ -132,6 +132,7 @@ void system_state_machine(void)
                 timestamp = now;
                 BUZZER_On();
                 cause_alerte = CAUSE_POULS;
+				Screen_SetState("POULS ANORMAL");
                 state = SUSPICION_POULS;
             }
             break;
