@@ -137,7 +137,6 @@ void system_state_machine(void)
             break;
 
         case SUSPICION_CHUTE:
-            Screen_SetState("CHUTE SUSPECTEE");
 
             if (evt == BUTTON_EVENT_PRESSED)
             {
@@ -150,6 +149,7 @@ void system_state_machine(void)
             {
                 timestamp = now;
                 printf(">>> 5s écoulées -> ATTENTE_CONFIRMATION\n");
+				Screen_SetState("ATTENTE CONFIRM.");
                 state = ATTENTE_CONFIRMATION;
             }
             break;
@@ -164,6 +164,7 @@ void system_state_machine(void)
             else if ((now - timestamp) > 5000)
             {
                 timestamp = now;
+				Screen_SetState("ATTENTE CONFIRM.");
                 state = ATTENTE_CONFIRMATION;
             }
             break;
