@@ -1,8 +1,13 @@
-/*
- * capteurPouls.c
+/**
+ * @file    capteurPouls.c
+ * @author  raafa
+ * @date    Mar 25, 2026
+ * @brief   Implémentation du module de gestion du capteur de pouls AD8232.
  *
- *  Created on: Mar 25, 2026
- *      Author: raafa
+ * Calcule le BPM par détection de fronts montants du signal ECG.
+ * Un battement est détecté quand le signal passe au-dessus du seuil
+ * peak_threshold. L'intervalle entre deux battements permet de
+ * calculer la fréquence cardiaque.
  */
 
 #include "capteurPouls.h"
@@ -11,15 +16,20 @@
 #include "AD8232/stm32g4_ad8232.h"
 
 static uint8_t  last_bpm = 0;
+
 static uint32_t last_beat_time = 0;
-static uint16_t peak_threshold = 2100;
+
+static uint16_t peak_threshold = 2500;
+
 static uint16_t last_raw = 0;
+
 
 void Pouls_Init(void)
 {
     AD8232_init();
     last_beat_time = HAL_GetTick();
 }
+
 
 uint16_t Pouls_GetRaw(void)
 {
@@ -30,6 +40,7 @@ bool Pouls_ElectrodesConnectees(void)
 {
     return AD8232_electrodesConnectees();
 }
+
 
 bool Pouls_IsValid(void)
 {
