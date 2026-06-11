@@ -38,7 +38,6 @@ typedef enum
 } alerte_cause_e;
 
 
-extern system_mode_e current_mode;
 void MAE_Init();
 
 void system_state_machine(void);
