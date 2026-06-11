@@ -39,7 +39,7 @@ typedef enum
 
 
 extern system_mode_e current_mode;
-void MPU_Init();
+void MAE_Init();
 
 void system_state_machine(void);
 #endif /* MAE_H_ */
