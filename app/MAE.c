@@ -9,6 +9,7 @@
  * via photoresistance, et envoi d'alertes via Bluetooth HC-05.
  */
 
+#include <frequence.h>
 #include "MAE.h"
 #include "config.h"
 #include "button.h"
@@ -16,7 +17,6 @@
 #include "bluetooth.h"
 #include "buzzer.h"
 #include "screen.h"
-#include "capteurPouls.h"
 #include "MPU6050/stm32g4_mpu6050.h"
 #include "stm32g4_adc.h"
 #include "stm32g4_sys.h"
@@ -24,14 +24,27 @@
 
 
 static MPU6050_t mpu_data;
+
 static bool mpu_ok = false;
+
 static system_state_e state = NORMAL;
+
 static uint32_t timestamp = 0;
+
 static bool alerte_envoyee = false;
+
 static alerte_cause_e cause_alerte = CAUSE_CHUTE;
 
 void MAE_Init(void)
 {
+
+    BUTTON_init(GPIOB, GPIO_PIN_0);
+	BUZZER_init();
+	LED_init();
+	BT_Init();
+	freq_Init();
+	Screen_Init();
+
     MPU6050_Result_t res = MPU6050_Init(
         &mpu_data,
         NULL, 0,
@@ -52,14 +65,7 @@ void MAE_Init(void)
     }
     Screen_SetState("NORMAL");
 
-    BUTTON_init(GPIOB, GPIO_PIN_0);   
-	BUZZER_init();
-	LED_init();
-	BT_Init();
-	Pouls_Init();
-	Screen_Init();
 }
-
 
 static bool chute_detectee(void)
 {
@@ -80,7 +86,7 @@ static bool immobilite_detectee(void)
     return (ax > -5 && ax < 5 && ay > -5 && ay < 5);
 }
 
-static bool pouls_anormal(uint8_t bpm)
+static bool freq_anormal(uint8_t bpm)
 {
     if (bpm == 0) return false;
     return (bpm < 50 || bpm > 100);
@@ -90,8 +96,8 @@ void system_state_machine(void)
 {
     button_event_t evt   = BUTTON_state_machine();
     uint32_t now         = HAL_GetTick();
-    uint8_t bpm          = Pouls_GetBPM();
-    bool electrodes_ok   = Pouls_ElectrodesConnectees();
+    uint8_t bpm          = freq_GetBPM();
+    bool electrodes_ok   = freq_ElectrodesConnectees();
 
 
     uint16_t lumiere = BSP_ADC_getValue(ADC_2);
@@ -127,13 +133,13 @@ void system_state_machine(void)
                 state = SUSPICION_CHUTE;
                 printf(">>> CHUTE DETECTEE -> SUSPICION_CHUTE\n");
             }
-            else if (electrodes_ok && pouls_anormal(bpm))
+            else if (electrodes_ok && freq_anormal(bpm))
             {
                 timestamp = now;
                 BUZZER_On();
-                cause_alerte = CAUSE_POULS;
-				Screen_SetState("POULS ANORMAL");
-                state = SUSPICION_POULS;
+                cause_alerte = CAUSE_FREQ;
+                Screen_SetState("FREQUENCE ANORMAL");
+                state = SUSPICION_FREQ;
             }
             break;
 
@@ -150,12 +156,12 @@ void system_state_machine(void)
             {
                 timestamp = now;
                 printf(">>> 5s écoulées -> ATTENTE_CONFIRMATION\n");
-				Screen_SetState("ATTENTE CONFIRM.");
+                Screen_SetState("ATTENTE CONFIRM.");
                 state = ATTENTE_CONFIRMATION;
             }
             break;
 
-       case SUSPICION_POULS:
+       case SUSPICION_FREQ:
             if (evt == BUTTON_EVENT_PRESSED)
             {
                 BUZZER_Off();
@@ -165,7 +171,7 @@ void system_state_machine(void)
             else if ((now - timestamp) > 5000)
             {
                 timestamp = now;
-				Screen_SetState("ATTENTE CONFIRM.");
+                Screen_SetState("ATTENTE CONFIRM.");
                 state = ATTENTE_CONFIRMATION;
             }
             break;
@@ -197,7 +203,7 @@ void system_state_machine(void)
             BUZZER_On();
             Screen_SetState("ALERTE ENVOYEE");
 
-            if (evt == BUTTON_EVENT_PRESSED || (!immobilite_detectee()))
+            if (evt == BUTTON_EVENT_PRESSED)
             {
                 BUZZER_Off();
                 Screen_SetState("NORMAL");
