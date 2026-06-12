@@ -29,13 +29,3 @@ void LED_setNuit(void)
     HAL_GPIO_WritePin(LED_BLUE_GPIO, LED_BLUE_PIN, GPIO_PIN_SET);
 }
 
-
-void LED_BLINKY(uint16_t ms)
-{
-	while(1)
-	{
-    HAL_GPIO_WritePin(LED_BLUE_GPIO, LED_BLUE_PIN, GPIO_PIN_RESET);
-    HAL_Delay(ms);
-    HAL_GPIO_WritePin(LED_BLUE_GPIO, LED_BLUE_PIN, GPIO_PIN_SET);
-	}
-}
