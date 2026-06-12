@@ -11,7 +11,7 @@
  */
 
 #include "screen.h"
-#include "capteurPouls.h"
+#include "frequence.h"
 #include <TFT_ili9341/stm32g4_ili9341.h>
 #include "tft_ili9341/stm32g4_fonts.h"
 #include "tft_ili9341/stm32g4_xpt2046.h"
@@ -70,14 +70,14 @@ void Screen_Update(void)
         state_color = ILI9341_COLOR_YELLOW;
     else if (strcmp(current_state, "ATTENTE CONFIRM.") == 0)
         state_color = ILI9341_COLOR_YELLOW;
-    else if (strcmp(current_state, "POULS ANORMAL") == 0)
+    else if (strcmp(current_state, "freq ANORMAL") == 0)
         state_color = ILI9341_COLOR_ORANGE;
     else if (strcmp(current_state, "ALERTE ENVOYEE") == 0)
         state_color = ILI9341_COLOR_RED;
 
     ILI9341_Puts(120, 70, (char*)current_state, &Font_11x18, state_color, ILI9341_COLOR_BLACK);
 
-    ILI9341_Puts(20, 120, "Pouls :", &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_COLOR_BLACK);
+    ILI9341_Puts(20, 120, "Frequence :", &Font_11x18, ILI9341_COLOR_WHITE, ILI9341_COLOR_BLACK);
 
     char buf[20];
     if (electrode_connected && current_bpm > 0)
