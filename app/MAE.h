@@ -20,7 +20,7 @@ typedef enum
 {
     NORMAL = 0,
     SUSPICION_CHUTE,
-    SUSPICION_POULS,
+    SUSPICION_FREQ,
     ATTENTE_CONFIRMATION,
     ALERTE_ENVOYEE
 } system_state_e;
@@ -34,7 +34,7 @@ typedef enum
 typedef enum
 {
     CAUSE_CHUTE,
-    CAUSE_POULS
+    CAUSE_FREQ
 } alerte_cause_e;
 
 
